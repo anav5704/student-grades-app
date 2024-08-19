@@ -2,17 +2,118 @@
 #include <fstream>
 #include <string>
 #include <iomanip>
-#include <sstream>
 
 using namespace std;
 
-struct Student {
+struct Student
+{
     string ID;
     double coursework;
     double finalExam;
 };
 
-string CalGrade(double coursework, double finalExam) {
+// ---------------------------- Prototypes ---------------------------- //
+
+void printTableHeader();
+
+string printLine(int length);
+
+void printTableRow(Student students);
+
+void printGradeStats(Student students[], int size);
+
+string getGrade(double coursework, double finalExam);
+
+void UpdateStudentMarks(Student students[], int size);
+
+double getPassRate(const Student students[], int size);
+
+double getAverageMark(const Student students[], int size);
+
+void printHighestScorer(const Student students[], int size);
+
+void printStudentTables(const Student students[], int size);
+
+void readData(const string &filename, Student students[], int &studentCount, int maxSize);
+
+int main()
+{
+    const string FILENAME = "studentData.txt";
+    const int SIZE = 100;
+
+    Student students[SIZE];
+    int studentCount = 0;
+    int choice;
+    bool continueRunning = true;
+    string studentID;
+    double newCoursework;
+    double newFinalExam;
+
+    cout << left << fixed << setprecision(2);
+
+    // ------------------------- App Start ------------------------- //
+
+    cout << "+-----------------------------------------------------+\n"
+         << "|                 Student Grades App                  |\n"
+         << "+-----------------------------------------------------+\n\n";
+
+    readData(FILENAME, students, studentCount, SIZE);
+
+    while (continueRunning)
+    {
+        cout << "\n1. View all students' details" << endl
+             << "2. View top student's details" << endl
+             << "3. View grade statistics" << endl
+             << "4. Update student's marks\n"
+             << "5. Exit\n\n";
+
+        cout << "Enter choice: ";
+        cin >> choice;
+        cout << endl;
+
+        switch (choice)
+        {
+        case 1:
+            printStudentTables(students, studentCount);
+            break;
+
+        case 2:
+            printHighestScorer(students, studentCount);
+            break;
+
+        case 3:
+            printGradeStats(students, studentCount);
+            break;
+
+        case 4:
+            UpdateStudentMarks(students, studentCount);
+            break;
+        case 5:
+            cout << "Exiting..." << endl;
+            continueRunning = false;
+            break;
+        }
+    }
+
+    return 0;
+}
+
+// ---------------------------- Functions ---------------------------- //
+
+string printLine(int length)
+{
+    string line = "";
+
+    for (int i = 0; i < length; i++)
+    {
+        line += "-";
+    }
+
+    return line;
+}
+
+string getGrade(double coursework, double finalExam)
+{
     double totalMark = coursework + finalExam;
 
     if (totalMark >= 85 && totalMark <= 100)
@@ -31,70 +132,49 @@ string CalGrade(double coursework, double finalExam) {
         return "D";
 }
 
-void printFile(const string& filename) {
-    ifstream file(filename);
-    if (file.is_open()) {
-        cout << "Contents of " << filename << ":\n";
-        string line;
-        while (getline(file, line)) {
-            cout << line << endl;
-        }
-        file.close();
-    } else {
-        cout << "Error! Unable to open file: " << filename << endl;
-    }
-}
+void readData(const string &filename, Student students[], int &studentCount, int maxSize)
+{
+    ifstream readFile(filename);
 
-void readData(const string& filename, Student students[], int& numStudents, int maxSize) {
-    ifstream in_file(filename);
-
-    if (in_file.fail()) {
+    if (readFile.fail())
+    {
         cout << "Error! Could not open file: " << filename << endl;
-        return;
+        exit(1);
     }
 
-    string line;
-    getline(in_file, line);
+    string headerOmit;
+    getline(readFile, headerOmit);
 
-    numStudents = 0;
-    while (numStudents < maxSize && getline(in_file, line)) {
-        istringstream iss(line);
-        if (iss >> students[numStudents].ID >> students[numStudents].coursework >> students[numStudents].finalExam) {
-            numStudents++;
-        }
+    while (readFile >> students[studentCount].ID >> students[studentCount].coursework >> students[studentCount].finalExam)
+    {
+        studentCount++;
     }
 
-    if (numStudents == 0) {
-        cout << "Warning: No data was read from the file." << endl;
-    } else if (numStudents == maxSize && !in_file.eof()) {
-        cout << "Warning: Maximum number of students reached. Some data may not have been read." << endl;
-    }
-
-    in_file.close();
+    readFile.close();
 }
 
-double calAvgMark(const Student students[], int size) {
-    if (size == 0)
-        return 0.0;
-
+double getAverageMark(const Student students[], int size)
+{
     double totalMarks = 0.0;
 
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         totalMarks += students[i].coursework + students[i].finalExam;
     }
 
     return totalMarks / size;
 }
 
-double calPassRate(const Student students[], int size) {
-    if (size == 0)
-        return 0.0;
-
+double getPassRate(const Student students[], int size)
+{
     int passCount = 0;
 
-    for (int i = 0; i < size; i++) {
-        string grade = CalGrade(students[i].coursework, students[i].finalExam);
-        if (grade == "A+" || grade == "A" || grade == "B+" || grade == "B" || grade == "C+" || grade == "C") {
+    for (int i = 0; i < size; i++)
+    {
+        string grade = getGrade(students[i].coursework, students[i].finalExam);
+
+        if (grade != "D")
+        {
             passCount++;
         }
     }
@@ -102,116 +182,93 @@ double calPassRate(const Student students[], int size) {
     return (1.0 * passCount) / size;
 }
 
-void findHighestScorer(const Student students[], int size) {
-    if (size == 0) {
-        cout << "No students to review." << endl;
-        return;
-    }
-
+void printHighestScorer(const Student students[], int size)
+{
     int highestIndex = 0;
+
     double highestMark = students[0].coursework + students[0].finalExam;
 
-    for (int i = 1; i < size; i++) {
+    for (int i = 0; i < size; i++)
+    {
         double totalMark = students[i].coursework + students[i].finalExam;
-        if (totalMark > highestMark) {
+
+        if (totalMark > highestMark)
+        {
             highestMark = totalMark;
             highestIndex = i;
         }
     }
 
-    cout << "Highest Scorer Details:\n";
-    cout << "Student ID: " << students[highestIndex].ID << endl;
-    cout << "Coursework Mark: " << students[highestIndex].coursework << endl;
-    cout << "Final Exam Mark: " << students[highestIndex].finalExam << endl;
-    cout << "Total Mark: " << highestMark << endl;
-    cout << "Grade: " << CalGrade(students[highestIndex].coursework, students[highestIndex].finalExam) << endl;
+    printTableHeader();
+    printTableRow(students[highestIndex]);
 }
 
-void printStudentData(const Student students[], int size) {
-    cout << "The student data is displayed below:\n";
-    cout << "Student ID\tCoursework\tFinal Exam\tGrade\n";
+void printTableHeader()
+{
+    cout << setw(15) << "Student ID"
+         << setw(15) << "CW"
+         << setw(15) << "Final"
+         << setw(15) << "Grade" << endl
+         << printLine(55) << endl;
+}
 
-    for (int i = 0; i < size; ++i) {
-        string grade = CalGrade(students[i].coursework, students[i].finalExam);
-        cout << students[i].ID << "\t\t"
-             << students[i].coursework << "\t\t"
-             << students[i].finalExam << "\t\t"
-             << grade << endl;
+void printTableRow(Student students)
+{
+    string grade = getGrade(students.coursework, students.finalExam);
+
+    cout << setw(15) << students.ID
+         << setw(15) << students.coursework
+         << setw(15) << students.finalExam
+         << setw(15) << grade << endl
+         << printLine(55) << endl;
+}
+
+void printStudentTables(const Student students[], int size)
+{
+    printTableHeader();
+
+    for (int i = 0; i < size; ++i)
+    {
+        printTableRow(students[i]);
     }
+}
 
-    double avgMark = calAvgMark(students, size);
-    double passRate = calPassRate(students, size);
-    
-    cout << fixed << setprecision(2);
-    cout << "\nAverage Mark: " << avgMark << endl;
+void printGradeStats(Student students[], int size)
+{
+    double averageMark = getAverageMark(students, size);
+    double passRate = getPassRate(students, size);
+
+    cout << "Average Mark: " << averageMark << endl;
     cout << "Pass Rate: " << passRate * 100 << "%" << endl;
-    
-    findHighestScorer(students, size);
 }
 
-void UpdateStudentMarks(Student students[], const string& studentID, double newCoursework, double newFinalExam, int size) {
-    for (int i = 0; i < size; i++) {
-        if (students[i].ID == studentID) {
-            students[i].coursework = newCoursework;
-            students[i].finalExam = newFinalExam;
-            cout << "Marks updated successfully for student ID: " << studentID << endl;
-            cout << "Updated Coursework: " << students[i].coursework << endl;
-            cout << "Updated Final Exam: " << students[i].finalExam << endl;
-            return;
-        }
-    }
-    cout << "Student ID not found!" << endl;
-}
+void UpdateStudentMarks(Student students[], int size)
+{
 
-int main() {
-    const int SIZE = 100;
-    Student students[SIZE];
-    int numStudents = 0;
     string studentID;
     double newCoursework;
     double newFinalExam;
 
-    string filename = "studentData.txt";
-    
-    cout << "Attempting to read file: " << filename << endl;
-    printFile(filename);
-
-    readData(filename, students, numStudents, SIZE);
-    
-    if (numStudents == 0) {
-        cout << "No student data was rea." << endl;
-        return 1;
-    }
-
-    cout << "Number of students read: " << numStudents << endl;
-    printStudentData(students, numStudents);
-
-    cout << "Enter student ID if you want to update: " << endl;
+    cout << "Enter student ID: ";
     cin >> studentID;
-    cout << "Enter New Coursework Mark: " << endl;
-    while (true) {
-        cin >> newCoursework;
-        if (cin.fail()) {
-            cout << "Invalid Coursework Mark. Try again: ";
-            cin.clear();
-            cin.ignore(1000, '\n');
-        } else {
-            break;
-        }
-    }
-    cout << "Enter New Final Exam Marks: " << endl;
-    while (true) {
-        cin >> newFinalExam;
-        if (cin.fail()) {
-            cout << "Invalid Final Exam mark. Try again: ";
-            cin.clear();
-            cin.ignore(1000, '\n');
-        } else {
-            break;
+
+    cout << "Enter new coursework: ";
+    cin >> newCoursework;
+
+    cout << "Enter new final exam: ";
+    cin >> newFinalExam;
+
+    for (int i = 0; i < size; i++)
+    {
+        if (students[i].ID == studentID)
+        {
+            students[i].coursework = newCoursework;
+            students[i].finalExam = newFinalExam;
+
+            cout << "Student details updated successfully!" << endl;
+            return;
         }
     }
 
-    UpdateStudentMarks(students, studentID, newCoursework, newFinalExam, numStudents);
-
-    return 0;
+    cout << "Student ID not found!" << endl;
 }
