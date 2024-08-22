@@ -1,6 +1,6 @@
 # Student Grades App
 
-This CLI app was made as a part of assignment 1 for CS1112 (Introduction to Data Structures and Algorithms) at USP.
+This CLI app was made as a part of assignment 1 for CS1112 (Introduction to Data Structures and Algorithms) at the [University of the South Pacific](https://usp.ac.fj).
 
 ## Features
 
@@ -41,7 +41,7 @@ After running the program, you will be prompted to enter the choice of the funct
 - Press `4` to update student's marks. You will be prompted to enter the student ID, new coursework, and new final exam marks
 - Press `5` to exit the program
 
-## Contributors
+## Authors
 
 - [Anav Chand](https://github.com/anav5704/)
 - [Seiloni Tuungahala](https://github.com/seiutuone)
