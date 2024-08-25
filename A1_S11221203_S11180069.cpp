@@ -69,6 +69,7 @@ int main()
     int studentCount = 0;
     int menuChoice;
 
+    // Format output with left alignment and fixed decimal place
     cout << left << fixed << setprecision(DECIMAL_PRECISION);
 
     // ------------------------- App Start ------------------------- //
@@ -82,9 +83,9 @@ int main()
     while (continueRunning)
     {
         cout << "\n1. View all students' details" << endl
-             << "2. View top student's details" << endl
+             << "2. View top students' details" << endl
              << "3. View grade statistics" << endl
-             << "4. Update student's marks\n"
+             << "4. Update student's marks" << endl
              << "5. Exit\n\n";
 
         cout << "Enter choice: ";
@@ -124,7 +125,7 @@ int main()
 void readData(string filename, Student students[], int &studentCount, int capacity)
 {
     bool isFull = studentCount == capacity;
-    ifstream readFile(filename);
+    ifstream readFile(filename.c_str());
 
     if (readFile.fail())
     {
@@ -135,7 +136,7 @@ void readData(string filename, Student students[], int &studentCount, int capaci
     string headerOmit;
     getline(readFile, headerOmit);
 
-    // Fill array until capacity is not reached  and data exists
+    // Fill array until capacity is not reached and data exists
     while (!isFull && readFile >> students[studentCount].Id >> students[studentCount].coursework >> students[studentCount].finalExam)
     {
         studentCount++;
