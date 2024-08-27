@@ -1,6 +1,6 @@
 # Student Grades App
 
-This CLI app was made as a part of assignment 1 for CS1112 (Introduction to Data Structures and Algorithms) at the [University of the South Pacific](https://usp.ac.fj). The program is built using C++ and shows the advantages of using structs over parallel arrays.
+This CLI app was made as a part of assignment 1 for CS112 (Introduction to Data Structures and Algorithms) at the [University of the South Pacific](https://usp.ac.fj). The program is built using C++ and shows the advantages of using structs over parallel arrays. In addition to this, modular design has been incorporated. This can be seen with the `printTableHeader()` and `printTableRow()` functions being used to create tables for various purposes.
 
 ## Features
 
@@ -8,6 +8,14 @@ This CLI app was made as a part of assignment 1 for CS1112 (Introduction to Data
 - View top student's details - as a user, you can view the top students' details in a table format
 - View grade statistics - as a user, you can view the average mark and pass rate of all students
 - Update student's marks - as a user, you can update the coursework and final exam marks of a student
+
+## Edge Cases
+
+This program is built to handle a few edge cases to provide a good user experience and to prevent unwanted behavior.
+
+- Input validation - all inputs are validate, meaning users cannot enter values that are not of the correct data type or values that are outside a specific range (e.g. menu choice is set to take in values only from 1 to 5).
+
+- Multiple Toppers - since users can update the grade of any student, there there are cases when multiple highest scorers exists. This program accommodates for that and displays all the students with the highest mark.
 
 ## Getting Started
 
