@@ -227,7 +227,7 @@ double getPassRate(Student students[], int studentCount)
     {
         string grade = getGrade(students[i].coursework, students[i].finalExam);
 
-        if (grade != "D")
+        if (grade != "D" && grade != "E")
         {
             passCount++;
         }
@@ -244,6 +244,7 @@ string getGrade(double coursework, double finalExam)
     const int GRADE_B_MIN = 64;
     const int GRADE_C_PLUS_MIN = 57;
     const int GRADE_C_MIN = 50;
+    const int GRADE_D_MIN = 40;
 
     double totalMark = coursework + finalExam;
 
@@ -271,9 +272,13 @@ string getGrade(double coursework, double finalExam)
     {
         return "C";
     }
-    else
+    else if (totalMark >= GRADE_D_MIN)
     {
         return "D";
+    }
+    else
+    {
+        return "E";
     }
 }
 
