@@ -7,13 +7,6 @@ using namespace std;
 
 const int COL_WIDTH = 15;
 const int ROW_WIDTH = 55;
-const int GRADE_A_PLUS_MIN = 85;
-const int GRADE_A_MIN = 78;
-const int GRADE_B_PLUS_MIN = 71;
-const int GRADE_B_MIN = 64;
-const int GRADE_C_PLUS_MIN = 57;
-const int GRADE_C_MIN = 50;
-const int ONE_HUNDRED = 100;
 
 struct Student
 {
@@ -226,6 +219,8 @@ double getAverageMark(Student students[], int studentCount)
 
 double getPassRate(Student students[], int studentCount)
 {
+    const int ONE_HUNDRED = 100;
+
     double passCount = 0.0;
 
     for (int i = 0; i < studentCount; i++)
@@ -243,6 +238,13 @@ double getPassRate(Student students[], int studentCount)
 
 string getGrade(double coursework, double finalExam)
 {
+    const int GRADE_A_PLUS_MIN = 85;
+    const int GRADE_A_MIN = 78;
+    const int GRADE_B_PLUS_MIN = 71;
+    const int GRADE_B_MIN = 64;
+    const int GRADE_C_PLUS_MIN = 57;
+    const int GRADE_C_MIN = 50;
+
     double totalMark = coursework + finalExam;
 
     if (totalMark >= GRADE_A_PLUS_MIN)
